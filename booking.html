@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Booking</title>
+    <link rel="stylesheet" href="booking.css">
+    
+</head>
+
+<body>
+    <div class="booking-container">
+        <h2>Book Your Stay</h2>
+        <form method="post" action="process_booking.php">
+            <input type="text" name="name" placeholder="Full Name" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="number" name="number" placeholder="Phone Number" required>
+            <input type="date" name="checkin" required>
+            <input type="date" name="checkout" required>
+            <button type="submit" name="book">Book Now</button>
+        </form>
+    </div>
+</body>
+
+</html>
