@@ -10,7 +10,7 @@
     <nav class="navbar">
         <ul>
             <li><a href="#">Home</a></li>
-            <li><a href="booking.html">Bookings</a></li> 
+            <li><a href="process_booking.php">Bookings</a></li> 
             <li><a href="#">Rooms</a></li>
             <li><a href="#">Customers</a></li>
             <li><a href="#">Reports</a></li>
