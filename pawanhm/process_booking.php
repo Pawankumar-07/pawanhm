@@ -27,9 +27,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $payment_method = $_POST['payment_method'];
     $checkin = $_POST['checkin'];
     $checkout = $_POST['checkout'];
+    $price = $_POST['price'];
+    $total_price = $_POST['total_price'];
 
-    $sql = "INSERT INTO bookings (name, email, phone_number, address, city, state, zip, guests, room_type, special_requests, payment_method, checkin, checkout)
-            VALUES ('$name', '$email', '$phone_number', '$address', '$city', '$state', '$zip', '$guests', '$room_type', '$special_requests', '$payment_method', '$checkin', '$checkout')";
+    $sql = "INSERT INTO bookings (name, email, phone_number, address, city, state, zip, guests, room_type, special_requests, payment_method, checkin, checkout, price, total_price)
+            VALUES ('$name', '$email', '$phone_number', '$address', '$city', '$state', '$zip', '$guests', '$room_type', '$special_requests', '$payment_method', '$checkin', '$checkout', '$price', '$total_price')";
 
     if ($conn->query($sql) === TRUE) {
         echo "Booking successful!";
@@ -41,7 +43,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 ?>
 
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -50,7 +51,61 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hotel Booking</title>
     <link rel="stylesheet" href="booking.css">
-    
+    <script>
+        function updatePrice() {
+            var roomType = document.querySelector('select[name="room_type"]').value;
+            var specialRequests = document.querySelector('textarea[name="special_requests"]').value;
+            var priceField = document.querySelector('input[name="price"]');
+            var totalPriceField = document.querySelector('input[name="total_price"]');
+            var paymentMethodField = document.querySelector('select[name="payment_method"]');
+            var qrCodeDiv = document.querySelector('.upi-qr-code');
+
+            var price = 0;
+            if (roomType === 'single') {
+                price = 100; // Example price for single room
+            } else if (roomType === 'double') {
+                price = 200; // Example price for double room
+            } else if (roomType === 'suite') {
+                price = 300; // Example price for suite
+            }
+
+            var specialRequestCharges = 0;
+            if (specialRequests.includes('extra bed')) {
+                specialRequestCharges += 50; // Example charge for extra bed
+            }
+            if (specialRequests.includes('breakfast')) {
+                specialRequestCharges += 20; // Example charge for breakfast
+            }
+
+            var gst = (price + specialRequestCharges) * 0.18;
+            var totalPrice = price + specialRequestCharges + gst;
+
+            priceField.value = price;
+            totalPriceField.value = totalPrice.toFixed(2);
+
+            if (totalPrice > 0) {
+                paymentMethodField.style.display = 'block';
+                qrCodeDiv.style.display = 'block';
+            } else {
+                paymentMethodField.style.display = 'none';
+                qrCodeDiv.style.display = 'none';
+            }
+        }
+
+        function showQRCode() {
+            var paymentMethod = document.querySelector('select[name="payment_method"]').value;
+            if (paymentMethod === 'upi_qr') {
+                document.querySelector('.upi-qr-code').style.display = 'block';
+            } else {
+                document.querySelector('.upi-qr-code').style.display = 'none';
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelector('select[name="room_type"]').addEventListener("change", updatePrice);
+            document.querySelector('textarea[name="special_requests"]').addEventListener("input", updatePrice);
+        });
+    </script>
 </head>
 
 <body>
@@ -72,20 +127,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <option value="suite">Suite</option>
             </select>
             <textarea name="special_requests" placeholder="Any special requests?" rows="3"></textarea>
-            <select name="payment_method" required>
+            <input type="number" name="price" placeholder="Price" readonly>
+            <input type="number" name="total_price" placeholder="Total Price" readonly>
+            <select name="payment_method" onchange="showQRCode()" style="display: none;" required>
                 <option value="" disabled selected>Payment Method</option>
-                <option value="credit_card">Credit Card</option>
-                <option value="debit_card">Debit Card</option>
-                <option value="paypal">PayPal</option>
                 <option value="cash">Cash</option>
+                <option value="upi_qr">UPI QR</option>
             </select>
             <input type="date" name="checkin" required>
             <input type="date" name="checkout" required>
             <button type="submit" name="book">Book Now</button>
         </form>
-        <div class="upi-qr-code">
+        <div class="upi-qr-code" style="display:none;">
             <h3>Scan to Pay via UPI</h3>
-            <img src="qr.jpeg" alt="UPI QR Code" />
+            <img src="sahil.jpeg" alt="UPI QR Code" />
         </div>
     </div>
 </body>
